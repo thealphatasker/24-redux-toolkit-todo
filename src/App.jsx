@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, removeTodo } from "./features/todoSlice";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const todos = useSelector((state) => state.todos.todos);
+  const dispatch = useDispatch();
+
+  const [todo, setTodo] = useState("");
+
+  const handleAddTodo = (e) => {
+    e.preventDefault();
+    dispatch(addTodo(todo));
+    setTodo("");
+  };
+
+  const handleDeleteTodo = (id) => {
+    dispatch(removeTodo(id));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div className="max-w-2xl mx-auto p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Redux Toolkit Todo App
+      </h1>
+
+      <form
+        onSubmit={handleAddTodo}
+        className="flex gap-2 mb-8 p-4 bg-white rounded-lg shadow"
+      >
+        <input
+          type="text"
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
+          placeholder="Enter a todo..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <button
+          type="submit"
+          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        >
+          Add Todo
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      </form>
+
+      <div className="bg-white rounded-lg shadow">
+        <h2 className="text-xl font-semibold p-4 border-b border-gray-200">
+          Todos ({todos.length})
+        </h2>
+
+        <div className="divide-y divide-gray-200">
+          {todos.map((todoItem) => (
+            <div
+              key={todoItem.id}
+              className="flex items-center justify-between p-4"
+            >
+              <span className="text-gray-800 flex-1">{todoItem.text}</span>
+              <button
+                onClick={() => handleDeleteTodo(todoItem.id)}
+                className="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
